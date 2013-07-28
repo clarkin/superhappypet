@@ -10,14 +10,16 @@ package
 		[Embed(source = "../assets/level_up.wav", mimeType = "application/octet-stream")] private const WavLevelUp:Class;
 		[Embed(source = "../assets/timer_ending.wav", mimeType = "application/octet-stream")] private const WavTimerEnding:Class;
 		[Embed(source = "../assets/alert.wav", mimeType = "application/octet-stream")] private const WavAlert:Class;
+		[Embed(source = "../assets/poop.wav", mimeType = "application/octet-stream")] private const WavPoop:Class;
 		public var sndButtonSelect:WavSound;
 		public var sndLevelUp:WavSound;
 		public var sndTimerEnding:WavSound;
 		public var sndAlert:WavSound;
+		public var sndPoop:WavSound;
 		
 		private var pet:Pet;
 		
-		public var GUI:FlxGroup, buttons:FlxGroup;
+		public var GUI:FlxGroup, buttons:FlxGroup, poops:FlxGroup;
 		private var txtHunger:FlxText, txtHappiness:FlxText;
 		private var btnMeal:FlxButton, btnTreat:FlxButton, btnToilet:FlxButton, btnMedicine:FlxButton;
 		public var messageBanner:MessageBanner;
@@ -55,10 +57,14 @@ package
 			sndLevelUp = new WavSound(new WavLevelUp() as ByteArray);
 			sndTimerEnding = new WavSound(new WavTimerEnding() as ByteArray);
 			sndAlert = new WavSound(new WavAlert() as ByteArray);
+			sndPoop = new WavSound(new WavPoop() as ByteArray);
+			
+			poops = new FlxGroup();
 			
 			pet = new Pet(this, 100, 100);
 
 			add(GUI);
+			add(poops);
 			add(pet);
 		}
 		
@@ -104,6 +110,12 @@ package
 			btnMedicine.status = FlxButton.NORMAL;
 			pet.doMedicine();
 			sndButtonSelect.play();
+		}
+		
+		public function addPoop(X:Number, Y:Number, Facing:uint):void {
+			var poop:Poop = new Poop(X, Y, Facing);
+			poops.add(poop);
+			sndPoop.play();
 		}
 		
 	}

@@ -13,6 +13,7 @@ package
 		
 		public static const SPEED_AS_BABY:Number = 10;
 		public static const MOVEMENT_CHANGE_BABY:Number = 0.3;
+		public static const POOP_TIME_BABY:Number = 15;
 		
 		private var _playstate:PlayState;
 		
@@ -23,12 +24,14 @@ package
 		private var start_x:Number = 0, start_y:Number = 0;
 		private var movement_change:Number = 0;
 		private var time_to_alert:Number = 0;
+		private var time_to_poop:Number = 20;
 		
 		public function Pet(playstate:PlayState, X:Number = 0, Y:Number = 0) {
 			super(X, Y);
 			_playstate = playstate;
 			start_x = X;
 			start_y = Y;
+			alpha = 0.95;
 			
 			loadGraphic(PngPet, true, true, 168, 168);
 			addAnimation("egg", [0]);
@@ -105,13 +108,27 @@ package
 			if (evolution == "baby") {
 				hunger -= FlxG.elapsed * 2;
 				happiness -= FlxG.elapsed;		
+				time_to_poop -= FlxG.elapsed;		
 				
 				if (hunger < 15) {
 					sendAlert(hunger);
 				} else if (happiness < 15) {
 					sendAlert(happiness);
 				}
+				
+				if (time_to_poop <= 0) {
+					time_to_poop = POOP_TIME_BABY + Math.round(Math.random() * 6) - 3;
+					var poop_direction:uint = LEFT;
+					var poop_x:Number = x;
+					if (facing == LEFT) {
+						poop_direction = RIGHT;
+						poop_x = x + width - 40;
+					}
+					_playstate.addPoop(poop_x, y + 30, poop_direction);
+				}
 			}
+			
+			
 			
 			statLimits();
 		}
@@ -146,6 +163,9 @@ package
 		public function doMeal():void {
 			hunger += 50;
 			happiness += 20;
+			//if (time_to_poop > 15) {
+				time_to_poop -= 10;
+			//}
 			
 			statLimits();
 		}
