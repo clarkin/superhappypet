@@ -38,6 +38,7 @@ package
 			play("egg");
 			facing = RIGHT;
 			_playstate.messageBanner.addMessage("Look, an egg");
+			_playstate.sndTimerEnding.play();
 			time_to_evolve = TIME_AS_EGG;
 		}
 		
@@ -117,6 +118,7 @@ package
 		
 		public function finishHatching():void {
 			_playstate.messageBanner.addMessage("It's a boy!");
+			_playstate.sndLevelUp.play();
 			evolution = "baby";
 			play(evolution);
 			time_to_evolve = TIME_AS_BABY;

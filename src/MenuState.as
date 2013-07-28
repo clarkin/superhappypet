@@ -1,10 +1,13 @@
 package
 {
 	import org.flixel.*;
+	import org.as3wavsound.*;
+	import flash.utils.ByteArray;
 
 	public class MenuState extends FlxState
 	{
-		
+		[Embed(source = "../assets/jingle.wav", mimeType = "application/octet-stream")] private const WavJingle:Class;
+		public var sndJingle:WavSound;
 
 		public function MenuState()
 		{
@@ -21,7 +24,8 @@ package
 			
 			add(title);
 			
-			
+			sndJingle = new WavSound(new WavJingle() as ByteArray);
+			sndJingle.play();
 			//startGame();
 		}
 		

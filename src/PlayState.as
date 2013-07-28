@@ -6,6 +6,13 @@ package
  
 	public class PlayState extends FlxState
 	{
+		[Embed(source = "../assets/button_select.wav", mimeType = "application/octet-stream")] private const WavButtonSelect:Class;
+		[Embed(source = "../assets/level_up.wav", mimeType = "application/octet-stream")] private const WavLevelUp:Class;
+		[Embed(source = "../assets/timer_ending.wav", mimeType = "application/octet-stream")] private const WavTimerEnding:Class;
+		public var sndButtonSelect:WavSound;
+		public var sndLevelUp:WavSound;
+		public var sndTimerEnding:WavSound;
+		
 		private var pet:Pet;
 		
 		public var GUI:FlxGroup, buttons:FlxGroup;
@@ -42,12 +49,14 @@ package
 			buttons.visible = false;
 			GUI.add(buttons);
 			
+			sndButtonSelect = new WavSound(new WavButtonSelect() as ByteArray);
+			sndLevelUp = new WavSound(new WavLevelUp() as ByteArray);
+			sndTimerEnding = new WavSound(new WavTimerEnding() as ByteArray);
+			
 			pet = new Pet(this, 100, 100);
 
 			add(GUI);
 			add(pet);
-			
-			
 		}
 		
 		override public function update():void {
@@ -73,21 +82,25 @@ package
 		private function clickMeal():void {
 			btnMeal.status = FlxButton.NORMAL;
 			pet.doMeal();
+			sndButtonSelect.play();
 		}
 		
 		private function clickTreat():void {
-			btnMeal.status = FlxButton.NORMAL;
+			btnTreat.status = FlxButton.NORMAL;
 			pet.doTreat();
+			sndButtonSelect.play();
 		}
 		
 		private function clickToilet():void {
-			btnMeal.status = FlxButton.NORMAL;
+			btnToilet.status = FlxButton.NORMAL;
 			pet.doToilet();
+			sndButtonSelect.play();
 		}
 		
 		private function clickMedicine():void {
-			btnMeal.status = FlxButton.NORMAL;
+			btnMedicine.status = FlxButton.NORMAL;
 			pet.doMedicine();
+			sndButtonSelect.play();
 		}
 		
 	}
