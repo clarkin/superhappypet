@@ -6,6 +6,8 @@ package
  
 	public class PlayState extends FlxState
 	{
+		[Embed(source = "../assets/sickness.png")] private var PngSickness:Class;
+		
 		[Embed(source = "../assets/button_select.wav", mimeType = "application/octet-stream")] private const WavButtonSelect:Class;
 		[Embed(source = "../assets/level_up.wav", mimeType = "application/octet-stream")] private const WavLevelUp:Class;
 		[Embed(source = "../assets/timer_ending.wav", mimeType = "application/octet-stream")] private const WavTimerEnding:Class;
@@ -24,6 +26,7 @@ package
 		public var GUI:FlxGroup, buttons:FlxGroup, poops:FlxGroup;
 		private var txtHunger:FlxText, txtHappiness:FlxText;
 		private var btnMeal:FlxButton, btnTreat:FlxButton, btnToilet:FlxButton, btnMedicine:FlxButton;
+		public var iconSickness:FlxSprite;
 		public var messageBanner:MessageBanner;
 		public var totalPoops:Number = 0;
 		
@@ -43,6 +46,9 @@ package
 			GUI.add(txtHappiness);
 			messageBanner = new MessageBanner(0, 330, 400);
 			GUI.add(messageBanner);
+			iconSickness = new FlxSprite(320, 50, PngSickness);
+			iconSickness.visible = false;
+			GUI.add(iconSickness);
 			
 			buttons = new FlxGroup();
 			btnMeal = new FlxButton(10, 370, "Meal", clickMeal);

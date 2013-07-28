@@ -17,6 +17,7 @@ package
 		
 		public static const HUNGER_DEATH_TIME:Number = 10;
 		public static const HAPPINESS_DEATH_TIME:Number = 10;
+		public static const SICKNESS_DEATH_TIME:Number = 20;
 		
 		private var _playstate:PlayState;
 		
@@ -30,9 +31,11 @@ package
 		private var time_to_poop:Number = 20;
 		private var time_to_death_hunger:Number = -1;
 		private var time_to_death_happiness:Number = -1;
+		private var time_to_death_sickness:Number = -1;
 		private var hunger_message_sent:Boolean = false;
 		private var happiness_message_sent:Boolean = false;
 		private var poop_message_sent:Boolean = false;
+		private var sickness_message_sent:Boolean = false;
 		
 		public function Pet(playstate:PlayState, X:Number = 0, Y:Number = 0) {
 			super(X, Y);
@@ -121,6 +124,9 @@ package
 				if (_playstate.totalPoops > 1) {
 					happiness -= FlxG.elapsed * _playstate.totalPoops;
 				}
+				if (time_to_death_sickness != -1) {
+					happiness -= FlxG.elapsed * 4;
+				}
 				time_to_poop -= FlxG.elapsed;		
 				
 				if (hunger < 15) {
@@ -159,11 +165,22 @@ package
 							_playstate.messageBanner.addMessage("! Unhappy !");
 						}
 					}
+				} else if (time_to_death_sickness != -1) {
+					time_to_death_sickness += FlxG.elapsed;
+					if (time_to_death_sickness >= SICKNESS_DEATH_TIME) {
+						petDeath();
+					} else if (time_to_death_sickness >= SICKNESS_DEATH_TIME / 2) {
+						if (!sickness_message_sent) {
+							sickness_message_sent = true;
+							_playstate.messageBanner.addMessage("! ! ! Dying of Sickness ! ! !");
+						}
+					}
 				} else if (_playstate.totalPoops > 1) {
 					sendAlert(12 - _playstate.totalPoops * 2);
 					if (!poop_message_sent) {
 						poop_message_sent = true;
 						_playstate.messageBanner.addMessage("! Poops !");
+						petSick();
 					}
 				}
 				
@@ -236,6 +253,11 @@ package
 				time_to_poop -= 10;
 			}
 			
+			if (hunger >= 145) {
+				petSick();
+				_playstate.messageBanner.addMessage("He has eaten too much!");
+			}
+			
 			statLimits();
 		}
 		
@@ -264,9 +286,21 @@ package
 		}
 		
 		public function doMedicine():void {
-			
-			
+			if (time_to_death_sickness != -1) {
+				time_to_death_sickness = -1;
+				_playstate.iconSickness.visible = false;
+				sickness_message_sent = false;
+				happiness += 30;
+			} else {
+				petSick();
+				_playstate.messageBanner.addMessage("He feels sick");
+			}
 			statLimits();
+		}
+		
+		public function petSick():void {
+			time_to_death_sickness = 0;
+			_playstate.iconSickness.visible = true;
 		}
 		
 		public function petDeath():void {
