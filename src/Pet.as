@@ -22,6 +22,7 @@ package
 		public var evolution:String = "egg";
 		private var start_x:Number = 0, start_y:Number = 0;
 		private var movement_change:Number = 0;
+		private var time_to_alert:Number = 0;
 		
 		public function Pet(playstate:PlayState, X:Number = 0, Y:Number = 0) {
 			super(X, Y);
@@ -102,11 +103,26 @@ package
 		
 		public function checkStats():void {
 			if (evolution == "baby") {
-				hunger -= FlxG.elapsed * 3;
-				happiness -= FlxG.elapsed;				
+				hunger -= FlxG.elapsed * 2;
+				happiness -= FlxG.elapsed;		
+				
+				if (hunger < 15) {
+					sendAlert(hunger);
+				} else if (happiness < 15) {
+					sendAlert(happiness);
+				}
 			}
 			
 			statLimits();
+		}
+		
+		private function sendAlert(noMoreAlertsFor:Number):void {
+			if (time_to_alert > 0) {
+				time_to_alert -= FlxG.elapsed;
+			} else {
+				_playstate.sndAlert.play();
+				time_to_alert = noMoreAlertsFor / 5 + 1;
+			}
 		}
 		
 		public function startHatching():void {

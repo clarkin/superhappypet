@@ -9,9 +9,11 @@ package
 		[Embed(source = "../assets/button_select.wav", mimeType = "application/octet-stream")] private const WavButtonSelect:Class;
 		[Embed(source = "../assets/level_up.wav", mimeType = "application/octet-stream")] private const WavLevelUp:Class;
 		[Embed(source = "../assets/timer_ending.wav", mimeType = "application/octet-stream")] private const WavTimerEnding:Class;
+		[Embed(source = "../assets/alert.wav", mimeType = "application/octet-stream")] private const WavAlert:Class;
 		public var sndButtonSelect:WavSound;
 		public var sndLevelUp:WavSound;
 		public var sndTimerEnding:WavSound;
+		public var sndAlert:WavSound;
 		
 		private var pet:Pet;
 		
@@ -52,6 +54,7 @@ package
 			sndButtonSelect = new WavSound(new WavButtonSelect() as ByteArray);
 			sndLevelUp = new WavSound(new WavLevelUp() as ByteArray);
 			sndTimerEnding = new WavSound(new WavTimerEnding() as ByteArray);
+			sndAlert = new WavSound(new WavAlert() as ByteArray);
 			
 			pet = new Pet(this, 100, 100);
 
