@@ -8,15 +8,14 @@ package
 		
 		private var _playstate:PlayState;
 		
-		public function Pet(playstate:PlayState, X:Number = 0, Y:Number = 0) 
-		{
+		public function Pet(playstate:PlayState, X:Number = 0, Y:Number = 0) {
 			super(X, Y);
 			
-			loadGraphic(PngPet, true, true, 50, 50);
+			loadGraphic(PngPet, true, true, 168, 168);
 			addAnimation("egg", [0]);
-			addAnimation("baby", [1]);
-			addAnimation("teen", [2]);
-			addAnimation("adult", [3]);
+			addAnimation("baby", [0]);
+			addAnimation("teen", [0]);
+			addAnimation("adult", [0]);
 			
 			play("egg");
 			
@@ -24,10 +23,13 @@ package
 		}
 		
 		
-		override public function update():void
-		{
-			
+		override public function update():void {
 			super.update();
+		}
+		
+		public function feedMeal():void {
+			trace("fed");
+			
 		}
 		
 	}

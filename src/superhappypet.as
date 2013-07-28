@@ -8,7 +8,6 @@ package
 	{
 		public function superhappypet()
 		{
-			trace("test");
 			super(400, 400, MenuState, 1); 
 		}
 	}
