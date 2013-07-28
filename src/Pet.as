@@ -6,10 +6,13 @@ package
 	{
 		[Embed(source = "../assets/pet.png")] private var PngPet:Class;
 		
-		public static const TIME_AS_EGG:Number = 5;
+		public static const TIME_AS_EGG:Number = 3;
 		public static const TIME_AS_HATCHING:Number = 3;
 		public static const TIME_AS_BABY:Number = 60;
 		public static const TIME_AS_TEEN:Number = 1000;
+		
+		public static const SPEED_AS_BABY:Number = 10;
+		public static const MOVEMENT_CHANGE_BABY:Number = 0.3;
 		
 		private var _playstate:PlayState;
 		
@@ -18,6 +21,7 @@ package
 		public var time_to_evolve:Number = 0;
 		public var evolution:String = "egg";
 		private var start_x:Number = 0, start_y:Number = 0;
+		private var movement_change:Number = 0;
 		
 		public function Pet(playstate:PlayState, X:Number = 0, Y:Number = 0) {
 			super(X, Y);
@@ -32,6 +36,7 @@ package
 			addAnimation("hatching", [3,4,5], 1);
 			
 			play("egg");
+			facing = RIGHT;
 			_playstate.messageBanner.addMessage("Look, an egg");
 			time_to_evolve = TIME_AS_EGG;
 		}
@@ -60,7 +65,37 @@ package
 		
 		public function checkMovement():void {
 			if (evolution == "hatching") {
-				x = start_x + Math.round(Math.random() * 6) - 3
+				x = start_x + Math.round(Math.random() * 6) - 3;
+			} else if (evolution == "baby") {
+				movement_change -= FlxG.elapsed;
+				if (movement_change <= 0) {
+					movement_change = MOVEMENT_CHANGE_BABY;
+					var chance:Number = Math.round(Math.random() * 100);
+					if (chance < 1) {
+						velocity.x = 0;
+					} else if (chance < 40) {
+						velocity.x = SPEED_AS_BABY;
+						if (facing == LEFT) {
+							velocity.x = -SPEED_AS_BABY;
+						}
+					} else if (chance < 50) {
+						if (facing == LEFT) {
+							facing = RIGHT;
+							velocity.x = 0;
+						} else {
+							facing = LEFT;
+							velocity.x = 0;
+						}
+					}
+					
+					if (start_x - x > 100) {
+						facing = RIGHT;
+						velocity.x = SPEED_AS_BABY;
+					} else if (start_x - x < -100) {
+						facing = LEFT;
+						velocity.x = -SPEED_AS_BABY;
+					}
+				}
 			}
 		}
 		
