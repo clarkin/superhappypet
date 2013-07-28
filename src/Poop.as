@@ -13,7 +13,9 @@ package
 		{
 			super(X,Y);
 			
-			loadGraphic(PngPoop, false, true, 72, 91);
+			loadGraphic(PngPoop, true, true, 72, 91);
+			addAnimation("poopin", [0, 1, 2], 0.5, false);
+			play("poopin");
 			
 			elasticity = 0.8;
 			maxVelocity.y = 400;

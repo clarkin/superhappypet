@@ -23,6 +23,7 @@ package
 		private var txtHunger:FlxText, txtHappiness:FlxText;
 		private var btnMeal:FlxButton, btnTreat:FlxButton, btnToilet:FlxButton, btnMedicine:FlxButton;
 		public var messageBanner:MessageBanner;
+		public var totalPoops:Number = 0;
 		
 		private var paused:Boolean = false;
 		
@@ -114,7 +115,11 @@ package
 		
 		public function addPoop(X:Number, Y:Number, Facing:uint):void {
 			var poop:Poop = new Poop(X, Y, Facing);
+			if (!poops.alive) {
+				poops.revive();
+			}
 			poops.add(poop);
+			totalPoops++;
 			sndPoop.play();
 		}
 		

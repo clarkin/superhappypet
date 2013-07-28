@@ -25,6 +25,9 @@ package
 		private var movement_change:Number = 0;
 		private var time_to_alert:Number = 0;
 		private var time_to_poop:Number = 20;
+		private var hunger_message_sent:Boolean = false;
+		private var happiness_message_sent:Boolean = false;
+		private var poop_message_sent:Boolean = false;
 		
 		public function Pet(playstate:PlayState, X:Number = 0, Y:Number = 0) {
 			super(X, Y);
@@ -112,8 +115,24 @@ package
 				
 				if (hunger < 15) {
 					sendAlert(hunger);
+					if (!hunger_message_sent) {
+						hunger_message_sent	= true;
+						_playstate.messageBanner.addMessage("! Hungry !");
+					}
 				} else if (happiness < 15) {
 					sendAlert(happiness);
+					if (!happiness_message_sent) {
+						happiness_message_sent	= true;
+						_playstate.messageBanner.addMessage("! Unhappy !");
+					}
+				}
+				
+				if (hunger >= 15) {
+					hunger_message_sent = false;
+				}
+				
+				if (happiness >= 15) {
+					happiness_message_sent = false;
 				}
 				
 				if (time_to_poop <= 0) {
@@ -138,7 +157,7 @@ package
 				time_to_alert -= FlxG.elapsed;
 			} else {
 				_playstate.sndAlert.play();
-				time_to_alert = noMoreAlertsFor / 5 + 1;
+				time_to_alert = noMoreAlertsFor / 5 + 0.5;
 			}
 		}
 		
@@ -162,10 +181,10 @@ package
 		
 		public function doMeal():void {
 			hunger += 50;
-			happiness += 20;
-			//if (time_to_poop > 15) {
+			happiness += 10;
+			if (time_to_poop > 12) {
 				time_to_poop -= 10;
-			//}
+			}
 			
 			statLimits();
 		}
@@ -173,12 +192,22 @@ package
 		public function doTreat():void {
 			hunger += 10;
 			happiness += 40;
+			if (time_to_poop > 4) {
+				time_to_poop -= 2;
+			}
 			
 			statLimits();
 		}
 		
 		public function doToilet():void {
-			
+			//trace("total poops: " + _playstate.totalPoops);
+			if (_playstate.totalPoops > 0) {
+				happiness += 10 * _playstate.totalPoops;
+				_playstate.poops.kill();
+				_playstate.totalPoops = 0;
+			} else {
+				happiness -= 10;
+			}
 			
 			statLimits();
 		}
