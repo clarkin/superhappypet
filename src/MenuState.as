@@ -12,10 +12,11 @@ package
 
 		override public function create():void
 		{
-			FlxG.mouse.hide();
+			FlxG.mouse.show();
+			FlxG.bgColor = 0x687800;
 			
-			var title:FlxText = new FlxText(0, 30, 400, "Super Happy Pet", true);
-			title.setFormat(null, 100, 0xFF3333CC, "center");
+			var title:FlxText = new FlxText(0, 10, 400, "Super Happy Pet", true);
+			title.setFormat(null, 100, 0x3C4500, "center");
 
 			
 			add(title);
@@ -26,7 +27,7 @@ package
 		
 		override public function update():void {
 			
-			if (FlxG.keys.justPressed("SPACE")) {
+			if (FlxG.keys.justPressed("SPACE") || FlxG.mouse.justPressed()) {
 				startGame();
 			}
 			
@@ -35,8 +36,8 @@ package
 
 		private function startGame():void
 		{
-			FlxG.mouse.hide();
-			//FlxG.switchState(new PlayState);
+			//FlxG.mouse.hide();
+			FlxG.switchState(new PlayState);
 		}
 	}
 }
