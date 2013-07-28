@@ -40,6 +40,7 @@ package
 		override public function update():void {
 			checkEvolve();
 			checkMovement();
+			checkStats();
 			
 			super.update();
 		}
@@ -63,6 +64,15 @@ package
 			}
 		}
 		
+		public function checkStats():void {
+			if (evolution == "baby") {
+				hunger -= FlxG.elapsed * 3;
+				happiness -= FlxG.elapsed;				
+			}
+			
+			statLimits();
+		}
+		
 		public function startHatching():void {
 			_playstate.messageBanner.addMessage("It's hatching!");
 			evolution = "hatching";
@@ -75,12 +85,68 @@ package
 			evolution = "baby";
 			play(evolution);
 			time_to_evolve = TIME_AS_BABY;
+			hunger = 30;
+			happiness = 30;
 			_playstate.buttons.visible = true;
 		}
 		
-		public function feedMeal():void {
-			trace("fed");
+		public function doMeal():void {
+			hunger += 50;
+			happiness += 20;
 			
+			statLimits();
+		}
+		
+		public function doTreat():void {
+			hunger += 10;
+			happiness += 40;
+			
+			statLimits();
+		}
+		
+		public function doToilet():void {
+			
+			
+			statLimits();
+		}
+		
+		public function doMedicine():void {
+			
+			
+			statLimits();
+		}
+		
+		private function statLimits():void {
+			if (hunger < 0) {
+				hunger = 0;
+			}
+			if (hunger > 100) {
+				hunger = 100;
+			}
+			if (happiness < 0) {
+				happiness = 0;
+			}
+			if (happiness > 100) {
+				happiness = 100;
+			}
+		}
+		
+		public function hungerReport():String {
+			var hungerVisual:String = "";
+			var times:Number = Math.round(hunger / 10);
+			for ( ; times > 0; times--) {
+				hungerVisual += "*";
+			}
+			return hungerVisual;
+		}
+		
+		public function happinessReport():String {
+			var happinessVisual:String = "";
+			var times:Number = Math.round(happiness / 10);
+			for ( ; times > 0; times--) {
+				happinessVisual += "*";
+			}
+			return happinessVisual;
 		}
 		
 	}

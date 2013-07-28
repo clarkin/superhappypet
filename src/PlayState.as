@@ -21,10 +21,10 @@ package
 			FlxG.worldBounds = new FlxRect(0, 0, 400, 400);
 			
 			GUI = new FlxGroup();
-			txtHunger = new FlxText(10, 10, 150, "Hunger: 0");
+			txtHunger = new FlxText(10, 10, 180, "Hunger: ");
 			txtHunger.setFormat("", 16, 0xFF3C4500, "left");
 			GUI.add(txtHunger);
-			txtHappiness = new FlxText(260, 10, 150, "Happiness: 0");
+			txtHappiness = new FlxText(210, 10, 180, "Happiness: ");
 			txtHappiness.setFormat("", 16, 0xFF3C4500, "left");
 			GUI.add(txtHappiness);
 			messageBanner = new MessageBanner(0, 330, 400);
@@ -33,11 +33,11 @@ package
 			buttons = new FlxGroup();
 			btnMeal = new FlxButton(10, 370, "Meal", clickMeal);
 			buttons.add(btnMeal);
-			btnTreat = new FlxButton(110, 370, "Treat", clickMeal);
+			btnTreat = new FlxButton(110, 370, "Treat", clickTreat);
 			buttons.add(btnTreat);
-			btnToilet = new FlxButton(210, 370, "Toilet", clickMeal);
+			btnToilet = new FlxButton(210, 370, "Toilet", clickToilet);
 			buttons.add(btnToilet);
-			btnMedicine = new FlxButton(310, 370, "Medicine", clickMeal);
+			btnMedicine = new FlxButton(310, 370, "Medicine", clickMedicine);
 			buttons.add(btnMedicine);
 			buttons.visible = false;
 			GUI.add(buttons);
@@ -53,6 +53,7 @@ package
 		override public function update():void {
 			if (!paused) {
 				checkControls();
+				checkPet();
 				
 				super.update();
 			} 			
@@ -64,9 +65,29 @@ package
 			}
 		}
 		
+		private function checkPet():void {
+			txtHunger.text = "Hunger: \n" + pet.hungerReport();
+			txtHappiness.text = "Happiness: \n" + pet.happinessReport();
+		}
+		
 		private function clickMeal():void {
 			btnMeal.status = FlxButton.NORMAL;
-			pet.feedMeal();
+			pet.doMeal();
+		}
+		
+		private function clickTreat():void {
+			btnMeal.status = FlxButton.NORMAL;
+			pet.doTreat();
+		}
+		
+		private function clickToilet():void {
+			btnMeal.status = FlxButton.NORMAL;
+			pet.doToilet();
+		}
+		
+		private function clickMedicine():void {
+			btnMeal.status = FlxButton.NORMAL;
+			pet.doMedicine();
 		}
 		
 	}
