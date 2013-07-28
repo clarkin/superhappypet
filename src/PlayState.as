@@ -8,9 +8,10 @@ package
 	{
 		private var pet:Pet;
 		
-		private var GUI:FlxGroup, buttons:FlxGroup;
-		private var txtHunger:FlxText, txtHappiness:FlxText, txtMessage:FlxText;
+		public var GUI:FlxGroup, buttons:FlxGroup;
+		private var txtHunger:FlxText, txtHappiness:FlxText;
 		private var btnMeal:FlxButton, btnTreat:FlxButton, btnToilet:FlxButton, btnMedicine:FlxButton;
+		public var messageBanner:MessageBanner;
 		
 		private var paused:Boolean = false;
 		
@@ -18,19 +19,16 @@ package
 			//FlxG.visualDebug = true;
 			FlxG.camera.setBounds(0, 0, 400, 400);
 			FlxG.worldBounds = new FlxRect(0, 0, 400, 400);
-						
-			pet = new Pet(this, 100, 100);
 			
 			GUI = new FlxGroup();
 			txtHunger = new FlxText(10, 10, 150, "Hunger: 0");
-			txtHunger.setFormat("", 16, 0x3C4500, "left");
+			txtHunger.setFormat("", 16, 0xFF3C4500, "left");
 			GUI.add(txtHunger);
 			txtHappiness = new FlxText(260, 10, 150, "Happiness: 0");
-			txtHappiness.setFormat("", 16, 0x3C4500, "left");
+			txtHappiness.setFormat("", 16, 0xFF3C4500, "left");
 			GUI.add(txtHappiness);
-			txtMessage = new FlxText(0, 330, 400, "Message goes here!");
-			txtMessage.setFormat("", 24, 0x3C4500, "center");
-			GUI.add(txtMessage);
+			messageBanner = new MessageBanner(0, 330, 400);
+			GUI.add(messageBanner);
 			
 			buttons = new FlxGroup();
 			btnMeal = new FlxButton(10, 370, "Meal", clickMeal);
@@ -43,9 +41,13 @@ package
 			buttons.add(btnMedicine);
 			buttons.visible = false;
 			GUI.add(buttons);
+			
+			pet = new Pet(this, 100, 100);
 
 			add(GUI);
 			add(pet);
+			
+			
 		}
 		
 		override public function update():void {
