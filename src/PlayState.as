@@ -11,11 +11,13 @@ package
 		[Embed(source = "../assets/timer_ending.wav", mimeType = "application/octet-stream")] private const WavTimerEnding:Class;
 		[Embed(source = "../assets/alert.wav", mimeType = "application/octet-stream")] private const WavAlert:Class;
 		[Embed(source = "../assets/poop.wav", mimeType = "application/octet-stream")] private const WavPoop:Class;
+		[Embed(source = "../assets/death.wav", mimeType = "application/octet-stream")] private const WavDeath:Class;
 		public var sndButtonSelect:WavSound;
 		public var sndLevelUp:WavSound;
 		public var sndTimerEnding:WavSound;
 		public var sndAlert:WavSound;
 		public var sndPoop:WavSound;
+		public var sndDeath:WavSound;
 		
 		private var pet:Pet;
 		
@@ -59,6 +61,7 @@ package
 			sndTimerEnding = new WavSound(new WavTimerEnding() as ByteArray);
 			sndAlert = new WavSound(new WavAlert() as ByteArray);
 			sndPoop = new WavSound(new WavPoop() as ByteArray);
+			sndDeath = new WavSound(new WavDeath() as ByteArray);
 			
 			poops = new FlxGroup();
 			

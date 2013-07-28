@@ -15,6 +15,9 @@ package
 		public static const MOVEMENT_CHANGE_BABY:Number = 0.3;
 		public static const POOP_TIME_BABY:Number = 15;
 		
+		public static const HUNGER_DEATH_TIME:Number = 10;
+		public static const HAPPINESS_DEATH_TIME:Number = 10;
+		
 		private var _playstate:PlayState;
 		
 		public var hunger:Number = 0;
@@ -25,6 +28,8 @@ package
 		private var movement_change:Number = 0;
 		private var time_to_alert:Number = 0;
 		private var time_to_poop:Number = 20;
+		private var time_to_death_hunger:Number = -1;
+		private var time_to_death_happiness:Number = -1;
 		private var hunger_message_sent:Boolean = false;
 		private var happiness_message_sent:Boolean = false;
 		private var poop_message_sent:Boolean = false;
@@ -40,7 +45,8 @@ package
 			addAnimation("egg", [0]);
 			addAnimation("baby", [1]);
 			addAnimation("teen", [2]);
-			addAnimation("hatching", [3,4,5], 1);
+			addAnimation("gravestone", [3]);
+			addAnimation("hatching", [4,5,6], 1);
 			
 			play("egg");
 			facing = RIGHT;
@@ -51,10 +57,11 @@ package
 		
 		
 		override public function update():void {
-			checkEvolve();
-			checkMovement();
-			checkStats();
-			
+			if (alive) {
+				checkEvolve();
+				checkMovement();
+				checkStats();
+			}
 			super.update();
 		}
 		
@@ -111,28 +118,67 @@ package
 			if (evolution == "baby") {
 				hunger -= FlxG.elapsed * 2;
 				happiness -= FlxG.elapsed;		
+				if (_playstate.totalPoops > 1) {
+					happiness -= FlxG.elapsed * _playstate.totalPoops;
+				}
 				time_to_poop -= FlxG.elapsed;		
 				
 				if (hunger < 15) {
 					sendAlert(hunger);
-					if (!hunger_message_sent) {
-						hunger_message_sent	= true;
-						_playstate.messageBanner.addMessage("! Hungry !");
+					if (hunger <= 0) {
+						if (time_to_death_hunger == -1) {
+							time_to_death_hunger = 0;
+							_playstate.messageBanner.addMessage("! ! ! Starving ! ! !");
+						} else {
+							time_to_death_hunger += FlxG.elapsed;
+							if (time_to_death_hunger >= HUNGER_DEATH_TIME) {
+								petDeath();
+							}
+						}
+					} else {
+						if (!hunger_message_sent) {
+							hunger_message_sent	= true;
+							_playstate.messageBanner.addMessage("! Hungry !");
+						}		
 					}
 				} else if (happiness < 15) {
 					sendAlert(happiness);
-					if (!happiness_message_sent) {
-						happiness_message_sent	= true;
-						_playstate.messageBanner.addMessage("! Unhappy !");
+					if (happiness <= 0) {
+						if (time_to_death_happiness == -1) {
+							time_to_death_happiness = 0;
+							_playstate.messageBanner.addMessage("! ! ! Suicidal ! ! !");
+						} else {
+							time_to_death_happiness += FlxG.elapsed;
+							if (time_to_death_happiness >= HAPPINESS_DEATH_TIME) {
+								petDeath();
+							}
+						}
+					} else {
+						if (!happiness_message_sent) {
+							happiness_message_sent = true;
+							_playstate.messageBanner.addMessage("! Unhappy !");
+						}
+					}
+				} else if (_playstate.totalPoops > 1) {
+					sendAlert(12 - _playstate.totalPoops * 2);
+					if (!poop_message_sent) {
+						poop_message_sent = true;
+						_playstate.messageBanner.addMessage("! Poops !");
 					}
 				}
 				
 				if (hunger >= 15) {
 					hunger_message_sent = false;
 				}
-				
 				if (happiness >= 15) {
 					happiness_message_sent = false;
+				}
+				
+				if (hunger > 0) {
+					time_to_death_hunger = -1;
+				}
+				if (happiness > 0) {
+					time_to_death_happiness = -1;
 				}
 				
 				if (time_to_poop <= 0) {
@@ -157,7 +203,10 @@ package
 				time_to_alert -= FlxG.elapsed;
 			} else {
 				_playstate.sndAlert.play();
-				time_to_alert = noMoreAlertsFor / 5 + 0.5;
+				time_to_alert = noMoreAlertsFor / 5;
+				if (time_to_alert <= 0.5) {
+					time_to_alert = 0.5;
+				}
 			}
 		}
 		
@@ -170,6 +219,7 @@ package
 		
 		public function finishHatching():void {
 			_playstate.messageBanner.addMessage("It's a boy!");
+			_playstate.messageBanner.addMessage("Look after him");
 			_playstate.sndLevelUp.play();
 			evolution = "baby";
 			play(evolution);
@@ -205,6 +255,7 @@ package
 				happiness += 10 * _playstate.totalPoops;
 				_playstate.poops.kill();
 				_playstate.totalPoops = 0;
+				poop_message_sent = false;
 			} else {
 				happiness -= 10;
 			}
@@ -216,6 +267,15 @@ package
 			
 			
 			statLimits();
+		}
+		
+		public function petDeath():void {
+			_playstate.sndDeath.play();
+			evolution = "gravestone";
+			play(evolution);
+			_playstate.messageBanner.addMessage("You let him DIE");
+			velocity.x = 0;
+			alive = false;
 		}
 		
 		private function statLimits():void {
