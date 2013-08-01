@@ -23,14 +23,16 @@ package
 		
 		private var pet:Pet;
 		
-		public var GUI:FlxGroup, buttons:FlxGroup, poops:FlxGroup;
-		private var txtHunger:FlxText, txtHappiness:FlxText;
+		public var GUI:FlxGroup, buttons:FlxGroup, poops:FlxGroup, nameChoiceGUI:FlxGroup;
+		private var txtHunger:FlxText, txtHappiness:FlxText, txtName:FlxText;
 		private var btnMeal:FlxButton, btnTreat:FlxButton, btnToilet:FlxButton, btnMedicine:FlxButton;
+		public var nameLabel:FlxText, inputName:FlxInputText;
+		
 		public var iconSickness:FlxSprite;
 		public var messageBanner:MessageBanner;
 		public var totalPoops:Number = 0;
 		
-		private var paused:Boolean = false;
+		public var paused:Boolean = false;
 		
 		override public function create():void {
 			//FlxG.visualDebug = true;
@@ -44,6 +46,9 @@ package
 			txtHappiness = new FlxText(210, 10, 180, "Happiness: ");
 			txtHappiness.setFormat("", 16, 0xFF3C4500, "left");
 			GUI.add(txtHappiness);
+			txtName = new FlxText(10, 50, 380, "");
+			txtName.setFormat("", 16, 0xFF3C4500, "center");
+			GUI.add(txtName);
 			messageBanner = new MessageBanner(0, 330, 400);
 			GUI.add(messageBanner);
 			iconSickness = new FlxSprite(320, 50, PngSickness);
@@ -61,6 +66,23 @@ package
 			buttons.add(btnMedicine);
 			buttons.visible = false;
 			GUI.add(buttons);
+			
+			nameChoiceGUI = new FlxGroup();
+			nameLabel = new FlxText(10, 270, 400, "Name your SUPER HAPPY PET");
+			nameLabel.setFormat("", 16, 0xFF3C4500, "center");
+			nameChoiceGUI.add(nameLabel);
+			inputName = new FlxInputText(140, 295, "PORKY", 120, 0xFF687800, 0xFF3C4500);
+			inputName.forceCase = FlxInputText.UPPER_CASE;
+			inputName.filterMode = FlxInputText.ONLY_ALPHANUMERIC;
+			inputName.backgroundColor = 0xFF3C4500;
+			inputName.caretColor = 0xFF687800;
+			inputName.color = 0xFF687800;
+			inputName.enterCallBack = choseName;
+			inputName.maxLength = 8;
+			inputName.size = 16;
+			nameChoiceGUI.add(inputName);
+			nameChoiceGUI.visible = false;
+			GUI.add(nameChoiceGUI);
 			
 			sndButtonSelect = new WavSound(new WavButtonSelect() as ByteArray);
 			sndLevelUp = new WavSound(new WavLevelUp() as ByteArray);
@@ -82,15 +104,14 @@ package
 			if (!paused) {
 				checkControls();
 				checkPet();
-				
-				super.update();
-			} 			
+			} 	
+			super.update();
 		}
 		
 		private function checkControls():void {
-			if (FlxG.keys.justReleased("ESCAPE")) {
-				FlxG.switchState(new MenuState);
-			}
+			//if (FlxG.keys.justReleased("ESCAPE")) {
+			//	FlxG.switchState(new MenuState);
+			//}
 		}
 		
 		private function checkPet():void {
@@ -99,27 +120,35 @@ package
 		}
 		
 		private function clickMeal():void {
-			btnMeal.status = FlxButton.NORMAL;
-			pet.doMeal();
-			sndButtonSelect.play();
+			if (!paused) {
+				btnMeal.status = FlxButton.NORMAL;
+				pet.doMeal();
+				sndButtonSelect.play();
+			}
 		}
 		
 		private function clickTreat():void {
-			btnTreat.status = FlxButton.NORMAL;
-			pet.doTreat();
-			sndButtonSelect.play();
+			if (!paused) {
+				btnTreat.status = FlxButton.NORMAL;
+				pet.doTreat();
+				sndButtonSelect.play();
+			}
 		}
 		
 		private function clickToilet():void {
-			btnToilet.status = FlxButton.NORMAL;
-			pet.doToilet();
-			sndButtonSelect.play();
+			if (!paused) {
+				btnToilet.status = FlxButton.NORMAL;
+				pet.doToilet();
+				sndButtonSelect.play();
+			}
 		}
 		
 		private function clickMedicine():void {
-			btnMedicine.status = FlxButton.NORMAL;
-			pet.doMedicine();
-			sndButtonSelect.play();
+			if (!paused) {
+				btnMedicine.status = FlxButton.NORMAL;
+				pet.doMedicine();
+				sndButtonSelect.play();
+			}
 		}
 		
 		public function addPoop(X:Number, Y:Number, Facing:uint):void {
@@ -130,6 +159,12 @@ package
 			poops.add(poop);
 			totalPoops++;
 			sndPoop.play();
+		}
+		
+		private function choseName(name:String):void {
+			pet.finishChoosingName(name);
+			txtName.text = name;
+			nameChoiceGUI.visible = false;
 		}
 		
 	}

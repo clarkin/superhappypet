@@ -84,7 +84,7 @@ package
 		public function checkMovement():void {
 			if (evolution == "hatching") {
 				x = start_x + Math.round(Math.random() * 6) - 3;
-			} else if (evolution == "baby") {
+			} else if (evolution == "baby" && !_playstate.paused) {
 				movement_change -= FlxG.elapsed;
 				if (movement_change <= 0) {
 					movement_change = MOVEMENT_CHANGE_BABY;
@@ -118,6 +118,10 @@ package
 		}
 		
 		public function checkStats():void {
+			if (_playstate.paused) {
+				return;
+			}
+			
 			if (evolution == "baby") {
 				hunger -= FlxG.elapsed * 2;
 				happiness -= FlxG.elapsed;		
@@ -209,9 +213,7 @@ package
 					_playstate.addPoop(poop_x, y + 30, poop_direction);
 				}
 			}
-			
-			
-			
+
 			statLimits();
 		}
 		
@@ -229,6 +231,7 @@ package
 		
 		public function startHatching():void {
 			_playstate.messageBanner.addMessage("It's hatching!");
+			_playstate.paused = true;
 			evolution = "hatching";
 			play(evolution);
 			time_to_evolve = TIME_AS_HATCHING;
@@ -236,14 +239,25 @@ package
 		
 		public function finishHatching():void {
 			_playstate.messageBanner.addMessage("It's a boy!");
-			_playstate.messageBanner.addMessage("Look after him");
 			_playstate.sndLevelUp.play();
 			evolution = "baby";
 			play(evolution);
+			startChoosingName();
+		}
+		
+		public function startChoosingName():void {
+			_playstate.nameChoiceGUI.visible = true;
+			_playstate.inputName.hasFocus = true;
+		}
+		
+		public function finishChoosingName(name:String):void {
+			_playstate.nameChoiceGUI.visible = false;
+			_playstate.messageBanner.addMessage("Please look after " + name);
 			time_to_evolve = TIME_AS_BABY;
 			hunger = 30;
 			happiness = 30;
 			_playstate.buttons.visible = true;
+			_playstate.paused = false;
 		}
 		
 		public function doMeal():void {
@@ -310,6 +324,7 @@ package
 			_playstate.messageBanner.addMessage("You let him DIE");
 			velocity.x = 0;
 			alive = false;
+			_playstate.paused = true;
 		}
 		
 		private function statLimits():void {
