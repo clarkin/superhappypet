@@ -356,7 +356,7 @@ package
 				time_to_death_sickness = -1;
 				_playstate.iconSickness.visible = false;
 				sickness_message_sent = false;
-				happiness += 30;
+				happiness += 30 - depression;
 			} else {
 				petSick();
 				_playstate.messageBanner.addMessage(name + " feels sick");

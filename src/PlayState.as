@@ -30,7 +30,7 @@ package
 		public var GUI:FlxGroup, buttons:FlxGroup, poops:FlxGroup, nameChoiceGUI:FlxGroup;
 		private var txtHunger:FlxText, txtHappiness:FlxText, txtName:FlxText;
 		private var btnMeal:FlxButtonPlus, btnPlay:FlxButtonPlus, btnToilet:FlxButtonPlus, btnMedicine:FlxButtonPlus;
-		public var nameLabel:FlxText, inputName:FlxInputText;
+		public var nameLabel:FlxText, inputName:FlxInputText, btnChooseName:FlxButtonPlus;
 		
 		public var iconSickness:FlxSprite;
 		public var messageBanner:MessageBanner;
@@ -95,7 +95,7 @@ package
 			nameLabel = new FlxText(10, 20, 400, "Name your SUPER HAPPY PET");
 			nameLabel.setFormat("", 16, 0xFF3C4500, "center");
 			nameChoiceGUI.add(nameLabel);
-			inputName = new FlxInputText(140, 50, "PORKY", 120, 0xFF687800, 0xFF3C4500);
+			inputName = new FlxInputText(110, 50, "PORKY", 120, 0xFF687800, 0xFF3C4500);
 			inputName.forceCase = FlxInputText.UPPER_CASE;
 			inputName.filterMode = FlxInputText.ONLY_ALPHANUMERIC;
 			inputName.backgroundColor = 0xFF3C4500;
@@ -105,6 +105,13 @@ package
 			inputName.maxLength = 7;
 			inputName.size = 16;
 			nameChoiceGUI.add(inputName);
+			btnChooseName = new FlxButtonPlus(240, 50, choseName, null, "OK", 50, 25);
+			btnChooseName.textNormal.setFormat("", 12, 0xFF3C4500, "center", 0);
+			btnChooseName.textHighlight.setFormat("", 12, 0xFF3C4500, "center", 0);
+			btnChooseName.borderColor = COLOR_TEXT;
+			btnChooseName.updateInactiveButtonColors([COLOR_BACKGROUND, COLOR_BACKGROUND]);
+			btnChooseName.updateActiveButtonColors([0xFF4E5900, 0xFF4E5900]);
+			nameChoiceGUI.add(btnChooseName);
 			nameChoiceGUI.visible = false;
 			GUI.add(nameChoiceGUI);
 			
@@ -181,10 +188,15 @@ package
 			sndPoop.play();
 		}
 		
-		private function choseName(name:String):void {
-			pet.finishChoosingName(name);
-			txtName.text = name;
-			nameChoiceGUI.visible = false;
+		private function choseName(name:String = ""):void {
+			if (name == "") {
+				name = inputName.text;
+			}
+			if (name != "") {
+				pet.finishChoosingName(name);
+				txtName.text = name;
+				nameChoiceGUI.visible = false;
+			}
 		}
 		
 	}
